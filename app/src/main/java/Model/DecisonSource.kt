@@ -15,21 +15,21 @@ object DecisionSource {
 
         Decision(
             title = "Lanjut Studi",
-            description = "Memilih S2 atau langsung kerja",
+            description = "Memilih S2 atau langsung bekerja",
             category = "Education",
             imageRes = R.drawable.study
         ),
 
         Decision(
-            title = "Mulai Bisnis",
-            description = "Membuka usaha sendiri",
+            title = "Memulai Bisnis",
+            description = "Memutuskan membuka usaha sendiri",
             category = "Business",
             imageRes = R.drawable.business
         ),
 
         Decision(
-            title = "Traveling",
-            description = "Menentukan destinasi liburan",
+            title = "Liburan",
+            description = "Memilih tempat untuk traveling",
             category = "Lifestyle",
             imageRes = R.drawable.travel
         )
