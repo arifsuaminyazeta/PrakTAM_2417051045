@@ -5,23 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.*
 import androidx.compose.material3.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.outlined.FavoriteBorder
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.res.painterResource
+import androidx.navigation.NavController
+import androidx.navigation.compose.*
 import com.example.praktam_2417051045.Model.Decision
 import com.example.praktam_2417051045.Model.DecisionSource
-import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.CircleShape
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,91 +23,149 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             MaterialTheme {
-                DecisionListScreen()
+                AppNavigation()
             }
         }
     }
 }
 
 @Composable
-fun DecisionListScreen() {
+fun AppNavigation() {
+
+    val navController = rememberNavController()
+
+    NavHost(navController = navController, startDestination = "list") {
+
+        composable("list") {
+            DecisionListScreen(navController)
+        }
+
+        composable("detail/{index}") { backStackEntry ->
+            val index = backStackEntry.arguments?.getString("index")?.toIntOrNull() ?: 0
+            val decision = DecisionSource.dummyDecision[index]
+
+            DecisionDetailScreen(decision, navController)
+        }
+    }
+}
+
+@Composable
+fun DecisionListScreen(navController: NavController) {
 
     val decisionList = DecisionSource.dummyDecision
+
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+
+        item {
+            Text(
+                text = "Decision Helper",
+                style = MaterialTheme.typography.headlineMedium,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+
+        itemsIndexed(decisionList) { index, decision ->
+
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(bottom = 16.dp),
+                elevation = CardDefaults.cardElevation(6.dp)
+            ) {
+
+                Column(
+                    modifier = Modifier.padding(12.dp)
+                ) {
+
+                    Image(
+                        painter = painterResource(id = decision.imageRes),
+                        contentDescription = decision.title,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Text(
+                        text = decision.title,
+                        fontWeight = FontWeight.Bold
+                    )
+
+                    Text(text = decision.category)
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    LazyRow {
+                        item {
+                            Button(
+                                onClick = {
+                                    navController.navigate("detail/$index")
+                                },
+                                modifier = Modifier.padding(end = 8.dp)
+                            ) {
+                                Text("Detail")
+                            }
+                        }
+
+                        item {
+                            Button(onClick = { }) {
+                                Text("Pilih")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun DecisionDetailScreen(decision: Decision, navController: NavController) {
 
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(24.dp)
-            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
     ) {
 
-        decisionList.forEach { decision ->
+        Image(
+            painter = painterResource(id = decision.imageRes),
+            contentDescription = decision.title,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(220.dp)
+        )
 
-            DecisionDetailScreen(decision)
-
-            Spacer(modifier = Modifier.height(24.dp))
-        }
-    }
-}
-
-@Composable
-fun DecisionDetailScreen(decision: Decision) {
-
-    var isFavorite by remember { mutableStateOf(false) }
-
-    Column {
-
-        Box {
-
-            Image(
-                painter = painterResource(id = decision.imageRes),
-                contentDescription = decision.title,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(200.dp)
-            )
-
-            IconButton(
-                onClick = {
-                    isFavorite = !isFavorite
-                },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(8.dp)
-            ) {
-                Box(
-                    modifier = Modifier
-                        .size(40.dp)
-                        .background(Color.Black.copy(alpha = 0.5f), shape = CircleShape),
-                    contentAlignment = Alignment.Center
-                ) {
-                    Icon(
-                        imageVector = if (isFavorite)
-                            Icons.Filled.Favorite
-                        else
-                            Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Favorite",
-                        tint = if (isFavorite) Color.Red else Color.White
-                    )
-                }
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(12.dp))
 
         Text(
             text = decision.title,
+            style = MaterialTheme.typography.headlineSmall,
             fontWeight = FontWeight.Bold
         )
 
-        Text(text = decision.description)
+        Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Kategori: ${decision.category}")
+        Text(text = decision.description)
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Button(onClick = { }) {
-            Text("Bantu Putuskan")
+        Text(text = "Kategori: ${decision.category}")
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                navController.popBackStack()
+            },
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text("Kembali")
         }
     }
 }
