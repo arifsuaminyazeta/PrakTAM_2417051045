@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
 import androidx.compose.material3.*
@@ -14,15 +15,15 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
-import com.example.praktam_2417051045.Model.Decision
-import com.example.praktam_2417051045.Model.DecisionSource
+import com.example.praktam_2417051045.Model.*
+import com.example.praktam_2417051045.ui.theme.PraktiktamTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContent {
-            MaterialTheme {
+            PraktiktamTheme {
                 AppNavigation()
             }
         }
@@ -57,13 +58,14 @@ fun DecisionListScreen(navController: NavController) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
 
         item {
             Text(
                 text = "Decision Helper",
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
         }
@@ -74,6 +76,9 @@ fun DecisionListScreen(navController: NavController) {
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 16.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surface
+                ),
                 elevation = CardDefaults.cardElevation(6.dp)
             ) {
 
@@ -93,14 +98,19 @@ fun DecisionListScreen(navController: NavController) {
 
                     Text(
                         text = decision.title,
-                        fontWeight = FontWeight.Bold
+                        style = MaterialTheme.typography.titleMedium
                     )
 
-                    Text(text = decision.category)
+                    Text(
+                        text = decision.category,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.primary
+                    )
 
                     Spacer(modifier = Modifier.height(8.dp))
 
                     LazyRow {
+
                         item {
                             Button(
                                 onClick = {
@@ -130,6 +140,7 @@ fun DecisionDetailScreen(decision: Decision, navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
 
@@ -145,17 +156,23 @@ fun DecisionDetailScreen(decision: Decision, navController: NavController) {
 
         Text(
             text = decision.title,
-            style = MaterialTheme.typography.headlineSmall,
+            style = MaterialTheme.typography.titleLarge,
             fontWeight = FontWeight.Bold
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = decision.description)
+        Text(
+            text = decision.description,
+            style = MaterialTheme.typography.bodyMedium
+        )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Text(text = "Kategori: ${decision.category}")
+        Text(
+            text = "Kategori: ${decision.category}",
+            color = MaterialTheme.colorScheme.primary
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
