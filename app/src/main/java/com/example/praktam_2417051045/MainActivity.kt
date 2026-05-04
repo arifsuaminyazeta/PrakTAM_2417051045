@@ -1,34 +1,30 @@
 package com.example.praktam_2417051045
 
+import coil.request.ImageRequest
+import androidx.compose.ui.platform.LocalContext
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.navigation.compose.*
 import com.example.praktam_2417051045.Model.*
 import com.example.praktam_2417051045.ui.theme.PraktiktamTheme
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.rememberCoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.runtime.*
+import coil.compose.AsyncImage
 import androidx.compose.ui.Alignment
-import kotlinx.coroutines.launch
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,7 +40,6 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun AppNavigation() {
-
     val navController = rememberNavController()
 
     NavHost(navController = navController, startDestination = "list") {
@@ -56,7 +51,6 @@ fun AppNavigation() {
         composable("detail/{index}") { backStackEntry ->
             val index = backStackEntry.arguments?.getString("index")?.toIntOrNull() ?: 0
             val decision = DecisionSource.dummyDecision[index]
-
             DecisionDetailScreen(decision, navController)
         }
     }
@@ -66,77 +60,122 @@ fun AppNavigation() {
 fun DecisionListScreen(navController: NavController) {
 
     val decisionList = DecisionSource.dummyDecision
+    var favoriteIndex by remember { mutableStateOf(-1) }
 
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
             .padding(16.dp)
     ) {
 
         item {
-            Text(
-                text = "Decision Helper",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            Text("DecisionApp", style = MaterialTheme.typography.headlineSmall, fontWeight = FontWeight.Bold)
+            Text("Bantu kamu menentukan pilihan hidup")
+            Spacer(modifier = Modifier.height(16.dp))
         }
 
-        itemsIndexed(decisionList) { index, decision ->
+        item {
+            val decision = decisionList[0]
 
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(bottom = 16.dp),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.surface
-                ),
-                elevation = CardDefaults.cardElevation(6.dp)
+                shape = RoundedCornerShape(20.dp),
+                modifier = Modifier.fillMaxWidth()
             ) {
+                Box {
 
-                Column(
-                    modifier = Modifier.padding(12.dp)
-                ) {
+                    val context = LocalContext.current
 
-                    Image(
-                        painter = painterResource(id = decision.imageRes),
+                    AsyncImage(
+                        model = ImageRequest.Builder(context)
+                            .data(decision.imageUrl)
+                            .placeholder(R.drawable.career)
+                            .error(R.drawable.business)
+                            .crossfade(true)
+                            .build(),
                         contentDescription = decision.title,
+                        contentScale = ContentScale.Crop,
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(180.dp)
+                            .height(220.dp)
                     )
 
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    Text(
-                        text = decision.title,
-                        style = MaterialTheme.typography.titleMedium
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(
+                                Brush.verticalGradient(
+                                    listOf(Color.Transparent, Color.Black.copy(0.7f))
+                                )
+                            )
                     )
 
-                    Text(
-                        text = decision.category,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.primary
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(16.dp),
+                        verticalArrangement = Arrangement.Bottom
+                    ) {
+                        Text(decision.title, color = Color.White)
+                        Text(decision.description, color = Color.White)
+                    }
+                }
+            }
 
-                    Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+        }
 
-                    LazyRow {
+        item {
+            Text("Pilihan terbaik untukmu")
+            Spacer(modifier = Modifier.height(12.dp))
+        }
 
-                        item {
-                            Button(
-                                onClick = {
-                                    navController.navigate("detail/$index")
-                                },
-                                modifier = Modifier.padding(end = 8.dp)
-                            ) {
-                                Text("Detail")
-                            }
-                        }
+        item {
+            LazyRow {
+                itemsIndexed(decisionList) { index, decision ->
 
-                        item {
-                            Button(onClick = { }) {
-                                Text("Pilih")
+                    Card(
+                        modifier = Modifier
+                            .width(160.dp)
+                            .padding(end = 12.dp),
+                        shape = RoundedCornerShape(16.dp)
+                    ) {
+                        Column {
+
+                            val context = LocalContext.current
+
+                            AsyncImage(
+                                model = ImageRequest.Builder(context)
+                                    .data(decision.imageUrl)
+                                    .placeholder(R.drawable.career)
+                                    .error(R.drawable.business)
+                                    .crossfade(true)
+                                    .build(),
+                                contentDescription = decision.title,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(220.dp)
+                            )
+
+                            Column(modifier = Modifier.padding(8.dp)) {
+
+                                Text(decision.title, maxLines = 1)
+
+                                Button(
+                                    onClick = {
+                                        navController.navigate("detail/$index")
+                                    },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text("Detail")
+                                }
+
+                                OutlinedButton(
+                                    onClick = { favoriteIndex = index },
+                                    modifier = Modifier.fillMaxWidth()
+                                ) {
+                                    Text(if (favoriteIndex == index) "✓ Favorit" else "Favorit")
+                                }
                             }
                         }
                     }
@@ -150,24 +189,24 @@ fun DecisionListScreen(navController: NavController) {
 fun DecisionDetailScreen(decision: Decision, navController: NavController) {
 
     var isLoading by remember { mutableStateOf(false) }
-    val coroutineScope = rememberCoroutineScope()
+    val scope = rememberCoroutineScope()
     val snackbarHostState = remember { SnackbarHostState() }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
-    ) {
+    Box(Modifier.fillMaxSize()) {
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp)
-        ) {
+        Column(Modifier.padding(16.dp)) {
 
-            Image(
-                painter = painterResource(id = decision.imageRes),
+            val context = LocalContext.current
+
+            AsyncImage(
+                model = ImageRequest.Builder(context)
+                    .data(decision.imageUrl)
+                    .placeholder(R.drawable.career)
+                    .error(R.drawable.business)
+                    .crossfade(true)
+                    .build(),
                 contentDescription = decision.title,
+                contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(220.dp)
@@ -175,63 +214,31 @@ fun DecisionDetailScreen(decision: Decision, navController: NavController) {
 
             Spacer(modifier = Modifier.height(12.dp))
 
-            Text(
-                text = decision.title,
-                style = MaterialTheme.typography.titleLarge,
-                fontWeight = FontWeight.Bold
-            )
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(text = decision.description)
-
-            Spacer(modifier = Modifier.height(8.dp))
-
-            Text(
-                text = "Kategori: ${decision.category}",
-                color = MaterialTheme.colorScheme.primary
-            )
-
-            Spacer(modifier = Modifier.height(16.dp))
+            Text(decision.title, fontWeight = FontWeight.Bold)
+            Text(decision.description)
 
             Button(
                 onClick = {
-                    coroutineScope.launch {
+                    scope.launch {
                         isLoading = true
                         delay(2000)
-
                         val result = listOf("Lanjutkan", "Tunda Dulu").random()
-
-                        snackbarHostState.showSnackbar(
-                            "Keputusan: $result"
-                        )
-
+                        snackbarHostState.showSnackbar("Keputusan: $result")
                         isLoading = false
                     }
                 },
-                modifier = Modifier.fillMaxWidth(),
-                enabled = !isLoading
+                enabled = !isLoading,
+                modifier = Modifier.fillMaxWidth()
             ) {
-
                 if (isLoading) {
-                    CircularProgressIndicator(
-                        modifier = Modifier.size(20.dp),
-                        color = MaterialTheme.colorScheme.onPrimary,
-                        strokeWidth = 2.dp
-                    )
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text("Memproses...")
+                    CircularProgressIndicator(modifier = Modifier.size(20.dp))
                 } else {
                     Text("Ambil Keputusan")
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
-
             Button(
-                onClick = {
-                    navController.popBackStack()
-                },
+                onClick = { navController.popBackStack() },
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text("Kembali")

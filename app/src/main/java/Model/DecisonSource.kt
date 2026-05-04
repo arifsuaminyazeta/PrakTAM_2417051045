@@ -1,7 +1,5 @@
 package com.example.praktam_2417051045.Model
 
-import com.example.praktam_2417051045.R
-
 object DecisionSource {
 
     val dummyDecision = listOf(
@@ -10,29 +8,28 @@ object DecisionSource {
             title = "Pilih Karir",
             description = "Menentukan jalur karir setelah lulus",
             category = "Career",
-            imageRes = R.drawable.career
+            imageUrl = "https://images.unsplash.com/photo-1521737604893-d14cc237f11d"
         ),
 
         Decision(
             title = "Lanjut Studi",
             description = "Memilih S2 atau langsung bekerja",
             category = "Education",
-            imageRes = R.drawable.study
+            imageUrl = "https://images.unsplash.com/photo-1498050108023-c5249f4df085"
         ),
 
         Decision(
             title = "Memulai Bisnis",
             description = "Memutuskan membuka usaha sendiri",
             category = "Business",
-            imageRes = R.drawable.business
+            imageUrl = "https://images.unsplash.com/photo-1556745757-8d76bdb6984b"
         ),
 
         Decision(
             title = "Liburan",
             description = "Memilih tempat untuk traveling",
             category = "Lifestyle",
-            imageRes = R.drawable.travel
+            imageUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
         )
-
     )
 }
