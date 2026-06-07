@@ -22,7 +22,7 @@ object DecisionSource {
         ),
         Decision(
             title = "Liburan",
-            description = "Memilih tempat untuk traveling",
+            description = "Memilih tempat untuk travel",
             category = "Lifestyle",
             imageUrl = "https://images.unsplash.com/photo-1507525428034-b723cf961d3e"
         )
