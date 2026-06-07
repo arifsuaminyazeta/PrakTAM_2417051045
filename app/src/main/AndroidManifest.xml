@@ -10,7 +10,8 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.PrakTAM_2417051045">
+        android:theme="@style/Theme.PrakTAM_2417051045"
+        android:usesCleartextTraffic="true">
         <activity
             android:name="com.example.praktam_2417051045.MainActivity"
             android:exported="true"
