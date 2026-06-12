@@ -6,5 +6,11 @@ data class Decision(
     @SerializedName("title") val title: String,
     @SerializedName("description") val description: String,
     @SerializedName("category") val category: String,
-    @SerializedName("image_url") val imageUrl: String
+    @SerializedName("image_res") val imageRes: Int,
+    @SerializedName("image_url") val imageUrl: String = "",
+    @SerializedName("pros") val pros: List<String> = emptyList(),
+    @SerializedName("cons") val cons: List<String> = emptyList(),
+    @SerializedName("tips") val tips: List<String> = emptyList(),
+    @SerializedName("analysis") val analysis: String = "",
+    @SerializedName("suitable_for") val suitableFor: List<String> = emptyList()
 )
